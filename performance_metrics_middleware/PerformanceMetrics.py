@@ -17,9 +17,6 @@ import csv
 class PerformanceMetricsMiddleware(object):
     CSV_HEADER = ["REQUEST_PATH", "REQUEST TIME", "RESPONSE TIME", "PARAMETER LIST", "MD5 HASH", "PROCESS ID", "THREAD ID"]
 
-    def get_current_time():
-        return str(datetime.datetime.now())
-
     def __init__(self, get_response, output_file = None):
         self.get_response = get_response
         self.file_write_lock = threading.Lock()
@@ -52,11 +49,11 @@ class PerformanceMetricsMiddleware(object):
     def __call__(self, request):
         # Cant attach request_sent_time to a class member because a single PerformanceMetricsMiddleware instance is shared
         # between threads
-        request.request_sent_time = PerformanceMetricsMiddleware.get_current_time()
+        request.request_sent_time = str(datetime.datetime.now())
 
         response = self.get_response(request)
 
-        response_rec_time = PerformanceMetricsMiddleware.get_current_time()
+        response_rec_time = str(datetime.datetime.now())
         md5_hash = "N/A"
         param_list = ""
         response_content = response.content
@@ -71,7 +68,7 @@ class PerformanceMetricsMiddleware(object):
 
         csv_row = [request.path, request.request_sent_time, 
                    response_rec_time, param_list, md5_hash, 
-                   str(os.getpid()), str(threading.get_ident())]
+                   str(os.getpid()), str(threading.current_thread().ident)]
 
         self.csv_write_row(csv_row)
 

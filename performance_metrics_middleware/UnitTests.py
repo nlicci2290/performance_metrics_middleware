@@ -23,7 +23,7 @@ def test_metric_log():
     mock_http_req.method = "GET"
     mock_http_req.path = "/"
 
-    thread_id = str(threading.get_ident())
+    thread_id = str(threading.current_thread().ident)
     pid = str(os.getpid())
     metrics_file = None
     metrics_data_row = None
@@ -45,17 +45,18 @@ def test_metric_log():
     # "REQUEST_PATH", "REQUEST TIME", "RESPONSE TIME", "PARAMETER LIST", "MD5 HASH", "PROCESS ID", "THREAD ID"
     #
     # /,2019-11-11 19:02:25.684578,2019-11-11 19:02:25.739542,,D8F1200C1C02C1322B58EFAF70FA9903,13184,15080
-    with open(OUTPUT_FILE, "r") as output_file:
-        metrics_file = output_file.readlines()
+    with open(OUTPUT_FILE, "r") as output_file: 
+        # remove all empty lines 
+        metrics_file = list(filter(lambda line: len(line.strip()) > 0, output_file.readlines()))
 
-    # Verify we have at least 2 lines of data (header row, data row)
-    assert (len(metrics_file) > 2)
+    # Verify we have 2 lines of data (header row, data row)
+    assert (len(metrics_file) == 2)
 
     # Verify first line is the header
     assert (metrics_file[0].strip() == CSV_HEADER_ROW)
 
     # Verify we have the correct number of entries in data row
-    metrics_data_row = metrics_file[2].split(",")
+    metrics_data_row = metrics_file[1].split(",")
     assert (len(metrics_data_row) == len(pmm.CSV_HEADER))
 
     # Verify we have the correct path logged
