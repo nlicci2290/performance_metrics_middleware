@@ -31,7 +31,7 @@ MIDDLEWARE = [ "performance_metrics_middleware.PerformanceMetrics.PerformanceMet
 In order to get the most accurate results, this should be the first middleware module installed.
 
 ## Sample projects
-Here is a sample django project with this module setup in the settings.py file
+Here is a sample django project (created by @amaltb) with this module setup in the settings.py file
 https://github.com/nlicci2290/django-webapp
 
 ## Running the tests
