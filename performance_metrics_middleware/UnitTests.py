@@ -66,8 +66,6 @@ def test_metric_log():
     # Verify request params are correct
     assert(metrics_data_row[3] == '"{""q"": ""5""}"')
 
-
-    print ("md5 to str " + str(TEST_CONTENT))
     # Verify md5 is correct
     assert(metrics_data_row[4].lower() == TEST_CONTENT_MD5)
 
